@@ -23,7 +23,15 @@ class App extends Component {
       css: '',
       js: '',
     };
+      
+      this.push = new Pusher("fd3b16c1090a01bb5cdc",{
+          cluster: "ap2",
+          forceTLS: true
+  });
+      
+      this.channel = this.pusher.subscribe("editor");
   }
+    
 
   componentDidUpdate() {
     this.runCode();
@@ -34,6 +42,28 @@ class App extends Component {
       id: pushid(),
     });
   }
+    
+    this.channel.bind("code-update",data => {
+        const {id} =this.state;
+        if(data.id ===id) return;
+        
+        this.setState({
+            html: data.html,
+            css: data.css,
+            js: data.js,
+        });
+    });
+}
+
+
+syncUpdates = () => {
+    const data ={...this.state };
+    
+    axios
+    .post("http://localhost:5000/update-editor",data)
+    .catch(console.error);
+};
+
 
   runCode = () => {
     const { html, css, js } = this.state;

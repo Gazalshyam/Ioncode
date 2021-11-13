@@ -157,4 +157,6 @@ syncUpdates = () => {
   }
 }
 
+}
+
 export default App;

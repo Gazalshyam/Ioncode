@@ -23,17 +23,9 @@ class App extends Component {
       css: '',
       js: '',
     };
+  }   
       
-      this.push = new Pusher("fd3b16c1090a01bb5cdc",{
-          cluster: "ap2",
-          forceTLS: true
-  });
-      
-      this.channel = this.pusher.subscribe("editor");
-  }
-    
-
-  componentDidUpdate() {
+   componentDidUpdate() {
     this.runCode();
   }
 
@@ -43,28 +35,6 @@ class App extends Component {
     });
   }
     
-    this.channel.bind("code-update",data => {
-        const {id} =this.state;
-        if(data.id ===id) return;
-        
-        this.setState({
-            html: data.html,
-            css: data.css,
-            js: data.js,
-        });
-    });
-}
-
-
-syncUpdates = () => {
-    const data ={...this.state };
-    
-    axios
-    .post("http://localhost:5000/update-editor",data)
-    .catch(console.error);
-};
-
-
   runCode = () => {
     const { html, css, js } = this.state;
 
@@ -118,7 +88,7 @@ syncUpdates = () => {
                 ...codeMirrorOptions,
               }}
               onBeforeChange={(editor, data, html) => {
-                this.setState({ html },() => this.syncUpdates());
+                this.setState({ html });
               }}
             />
           </div>
@@ -131,7 +101,7 @@ syncUpdates = () => {
                 ...codeMirrorOptions,
               }}
               onBeforeChange={(editor, data, css) => {
-                this.setState({ css },() => this.syncUpdates());
+                this.setState({ css });
               }}
             />
           </div>
@@ -144,7 +114,7 @@ syncUpdates = () => {
                 ...codeMirrorOptions,
               }}
               onBeforeChange={(editor, data, js) =>{
-                this.setState({ js },() => this.syncUpdates());
+                this.setState({ js });
               }}
             />
           </div>
@@ -155,8 +125,6 @@ syncUpdates = () => {
       </div>
     );
   }
-}
-
 }
 
 export default App;
